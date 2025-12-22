@@ -1,4 +1,4 @@
-﻿using CarRental.Models;
+using CarRental.Models;
 using CarRental.Utilities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis;
@@ -22,7 +22,7 @@ namespace CarRental.Controllers
         public async Task<IActionResult> Create( string name, string email, string phone, string message )
         {
             //kiem tra trang thai dang nhap
-            if (!Function.IsLogin())
+            if (!Function.IsLogin(HttpContext.Session))
             {
 
                 return RedirectToAction("Index", "Login");
@@ -51,7 +51,6 @@ namespace CarRental.Controllers
                 // Ghi log lỗi (nếu cần) và trả về trạng thái thất bại
                 return Json(new { status = false, message = ex.Message });
             }
-            return RedirectToAction("Index");
         }
     }
 }

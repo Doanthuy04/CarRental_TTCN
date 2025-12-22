@@ -22,4 +22,6 @@ public partial class OrderDetail
     public DateTime? ReturnDate { get; set; }
 
     public virtual CarRentalOrder Order { get; set; } = null!;
+
+    public virtual Car? Car { get; set; }
 }

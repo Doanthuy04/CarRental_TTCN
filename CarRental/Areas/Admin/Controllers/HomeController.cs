@@ -1,4 +1,5 @@
-﻿using CarRental.Utilities;
+﻿using CarRental.Models;
+using CarRental.Utilities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarRental.Areas.Admin.Controllers
@@ -6,27 +7,34 @@ namespace CarRental.Areas.Admin.Controllers
     
     public class HomeController : Controller
     {
+        private readonly DbRenalCarContext _context;
+
+        public HomeController(DbRenalCarContext context)
+        {
+            _context = context;
+        }
+
         [Area("Admin")]
         public IActionResult Index()
         {
-            //kiem tra trang thai dang nhap
-            if (!Function.IsLogin())
+            // Kiểm tra trạng thái đăng nhập và quyền Admin
+            if (!Function.IsLogin(HttpContext.Session) || !Function.IsAdmin(HttpContext.Session))
             {
 
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Index", "Login", new { area = "Admin" });
             }
+
+            // Thống kê người dùng & chủ xe (ép sang chuỗi để hiển thị chắc chắn)
+            // Đếm tất cả accounts (không bao gồm admin - RoleId = 1)
+            ViewBag.TotalCustomers = _context.Accounts.Count(a => a.RoleId != 1).ToString();
+            ViewBag.TotalCarOwners = _context.Accounts.Count(a => a.RoleId == 3).ToString();
+
             return View();
         }
         [Area("Admin")]
 
         public IActionResult Logout() {
-            Function._AccountId = 0;
-            Function._UserName = string.Empty;
-            Function._Email = string.Empty;
-
-            Function._Message = string.Empty;
-
-            Function._MessageEmail = string.Empty;
+            Function.ClearSession(HttpContext.Session);
             return RedirectToAction("Index", "Home");
 
         }

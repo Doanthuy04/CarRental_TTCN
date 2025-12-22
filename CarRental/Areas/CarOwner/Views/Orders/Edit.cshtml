@@ -1,0 +1,165 @@
+@model CarRental.Models.CarRentalOrder
+@using CarRental.Utilities
+@{
+    ViewData["Title"] = "Cập nhật đơn hàng";
+    Layout = "~/Areas/CarOwner/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .order-update-card {
+        border: none;
+        border-radius: 18px;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+    }
+
+    .order-update-card .card-header {
+        background: linear-gradient(135deg, #4f46e5, #e72463);
+        color: #fff;
+        padding: 20px 24px;
+        border-bottom: none;
+    }
+
+    .order-update-card .card-header h4 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 20px;
+    }
+
+    .order-update-card .card-body {
+        padding: 24px 24px 20px;
+        background: #f9fafb;
+    }
+
+    .order-field-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: #6b7280;
+        margin-bottom: 4px;
+    }
+
+    .order-field-readonly {
+        background-color: #f3f4f6;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+        font-size: 14px;
+        color: #111827;
+    }
+
+    .order-field-readonly[readonly] {
+        cursor: default;
+    }
+
+    .order-status-select {
+        border-radius: 10px;
+        font-size: 14px;
+    }
+
+    .order-actions {
+        display: flex;
+        gap: 10px;
+    }
+
+    .order-actions .btn-primary {
+        border-radius: 999px;
+        padding-inline: 24px;
+    }
+
+    .order-actions .btn-danger {
+        border-radius: 999px;
+        padding-inline: 20px;
+    }
+</style>
+
+<div id="main">
+    <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+        </a>
+    </header>
+
+    <div class="page-heading">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-12 col-md-6 order-md-1 order-last">
+                    <h3>Cập nhật đơn hàng</h3>
+                </div>
+                <div class="col-12 col-md-6 order-md-2 order-first">
+                    <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" asp-area="CarOwner">Trang chủ</a></li>
+                            <li class="breadcrumb-item"><a asp-action="Index">Đơn đặt xe</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Cập nhật</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <section class="section">
+            <div class="card order-update-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title mb-0">
+                        Cập nhật trạng thái đơn hàng #@Model.OrderId
+                    </h4>
+                </div>
+                <div class="card-body">
+                    @if (!string.IsNullOrEmpty(Function._Message))
+                    {
+                        <div class="alert alert-info">@Function._Message</div>
+                        Function._Message = string.Empty;
+                    }
+
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <input type="hidden" asp-for="OrderId" />
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Customer.FullName" class="order-field-label">Tên người đặt</label>
+                            <input asp-for="Customer.FullName" class="form-control order-field-readonly" readonly>
+                            <span asp-validation-for="Customer.FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="OrderDate" class="order-field-label">Ngày đặt</label>
+                            <input asp-for="OrderDate" class="form-control order-field-readonly" readonly>
+                            <span asp-validation-for="OrderDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Deposit" class="order-field-label">Tiền cọc</label>
+                            <input asp-for="Deposit" type="text" class="form-control order-field-readonly" readonly>
+                            <span asp-validation-for="Deposit" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Payment" class="order-field-label">Số tiền phải trả sau khi nhận xe</label>
+                            <input asp-for="Payment" type="text" class="form-control order-field-readonly" readonly>
+                            <span asp-validation-for="Payment" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Notes" class="order-field-label">Lời nhắn</label>
+                            <input asp-for="Notes" type="text" class="form-control order-field-readonly" readonly>
+                            <span asp-validation-for="Notes" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="StatusId" class="order-field-label">Trạng thái <span class="text-danger">*</span></label>
+                            <select asp-for="StatusId" asp-items="ViewBag.OrderStatus" class="form-select order-status-select">
+                                <option value="0">--Chọn trạng thái--</option>
+                            </select>
+                            <span asp-validation-for="StatusId" class="text-danger"></span>
+                        </div>
+
+                        <div class="order-actions mb-2">
+                            <button type="submit" class="btn btn-primary">Cập nhật</button>
+                            <a asp-action="Index" class="btn btn-danger">Quay lại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+

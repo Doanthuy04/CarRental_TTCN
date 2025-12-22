@@ -176,7 +176,7 @@ namespace CarRental.Controllers
         public IActionResult Checkout()
         {
             //kiem tra trang thai dang nhap
-            if (!Function.IsLogin())
+            if (!Function.IsLogin(HttpContext.Session))
             {
 
                 return RedirectToAction("Index", "Login", new { ReturnUrl = Url.Action("Checkout", "Cart") });
@@ -205,7 +205,7 @@ namespace CarRental.Controllers
         [HttpPost]
         public IActionResult Checkout([FromBody] CheckoutVM model)
         {
-            if (!Function.IsLogin())
+            if (!Function.IsLogin(HttpContext.Session))
             {
                 return Json(new { success = false, message = "Bạn cần đăng nhập để tiếp tục." });
                 
@@ -217,7 +217,7 @@ namespace CarRental.Controllers
 
 
                 var cart = CART;
-                var customerID = Function._AccountId;
+                var customerID = Function.GetAccountId(HttpContext.Session);
                 var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == customerID);
                 ViewBag.Order =  _context.CarRentalOrders.Include(i => i.Status).Where(p => p.CustomerId == customerID).ToList();
                 if (customer == null)
@@ -225,9 +225,37 @@ namespace CarRental.Controllers
                     return Json(new { success = false, message = "Không tìm thấy khách hàng." });
                 }
 
+                // Kiểm tra địa chỉ
                 if (string.IsNullOrWhiteSpace(customer.Address))
                 {
-                    return Json(new { success = false, message = "Vui lòng cập nhật địa chỉ nhận xe." });
+                    // Lưu returnUrl vào session để quay lại sau khi cập nhật địa chỉ
+                    var returnUrl = Url.Action("Checkout", "Cart");
+                    HttpContext.Session.SetString("AddressUpdateReturnUrl", returnUrl);
+                    
+                    return Json(new { 
+                        success = false, 
+                        message = "Vui lòng cập nhật địa chỉ nhận xe.", 
+                        needAddress = true,
+                        redirectUrl = Url.Action("editAdress", "Accounts", new { returnUrl = returnUrl })
+                    });
+                }
+                
+                // Kiểm tra GPLX (Giấy phép lái xe)
+                if (string.IsNullOrWhiteSpace(customer.LicenseNumber))
+                {
+                    // Lưu returnUrl vào session để quay lại sau khi cập nhật GPLX
+                    var returnUrl = Url.Action("Checkout", "Cart");
+                    HttpContext.Session.SetString("LicenseUpdateReturnUrl", returnUrl);
+                    
+                    // Redirect đến My Account với tab GPLX và returnUrl trong query string
+                    var accountsUrl = Url.Action("Index", "Accounts", new { returnUrl = returnUrl }) + "#download";
+                    
+                    return Json(new { 
+                        success = false, 
+                        message = "Vui lòng cập nhật thông tin Giấy phép lái xe trước khi đặt xe.", 
+                        needLicense = true,
+                        redirectUrl = accountsUrl
+                    });
                 }
 
 
@@ -290,16 +318,17 @@ namespace CarRental.Controllers
                             {
                                 Amount = (double)deposit,
                                 CreatedDate = DateTime.Now,
-                                Description = $"{Function._UserName} {Function._Phone}",
-                                FullName = Function._UserName,
+                                Description = $"{Function.GetUserName(HttpContext.Session)} {Function.GetPhone(HttpContext.Session)}",
+                                FullName = Function.GetUserName(HttpContext.Session),
                                 OrderId = new Random().Next(1000, 100000)
                             };
                             var paymentUrl = _vnpayServices.CreatePaymentUrl(HttpContext, vnPayModel);
 
-                            return Json(new { success = true, redirectUrl = paymentUrl });
+                            return Json(new { success = true, redirectUrl = paymentUrl, isVnpay = true });
                         }
-                        // Trả về URL của trang profile
-                        return Json(new { success = true, redirectUrl = Url.Action("Index", "Accounts") });
+                        // Trả về URL trang đơn hàng của khách
+                        var ordersUrl = Url.Action("Index", "Accounts") + "?tab=orders";
+                        return Json(new { success = true, redirectUrl = ordersUrl, isVnpay = false });
                     }
                     catch (Exception ex)
                     {
@@ -326,7 +355,7 @@ namespace CarRental.Controllers
             if (ModelState.IsValid)
             {
                 var cart = CART;
-                var customerID = Function._AccountId;
+                var customerID = Function.GetAccountId(HttpContext.Session);
                 var customer = _context.Customers.FirstOrDefault(c => c.CustomerId == customerID);
                 //kiểm tra nếu khách hàng chưa cập nhật thôn tin địa chỉ thì phải quay về cập nhật
                 if (customer.Address == null)

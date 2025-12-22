@@ -1,0 +1,110 @@
+@model CarRental.Models.Account
+@{
+    ViewData["Title"] = "Chi tiết tài khoản";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div id="main">
+    <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+        </a>
+    </header>
+
+    <div class="page-heading">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-12 col-md-6 order-md-1 order-last">
+                    <h3>Chi tiết tài khoản</h3>
+                    <p class="text-subtitle text-muted">Thông tin chi tiết tài khoản người dùng</p>
+                </div>
+                <div class="col-12 col-md-6 order-md-2 order-first">
+                    <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/Admin/Home">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a asp-action="Index">Quản lý người dùng</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Chi tiết</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <section class="section">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Thông tin tài khoản</h4>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">ID Tài khoản:</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.AccountId)</dd>
+
+                        <dt class="col-sm-3">Username:</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Username)</dd>
+
+                        <dt class="col-sm-3">Họ tên:</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.FullName)</dd>
+
+                        <dt class="col-sm-3">Email:</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+
+                        <dt class="col-sm-3">Số điện thoại:</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.Phone)</dd>
+
+                        <dt class="col-sm-3">Role:</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.Role != null)
+                            {
+                                <span class="badge bg-info">@Model.Role.RoleName</span>
+                                @if (!string.IsNullOrEmpty(Model.Role.Description))
+                                {
+                                    <span class="text-muted"> - @Model.Role.Description</span>
+                                }
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary">Chưa có</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">Trạng thái:</dt>
+                        <dd class="col-sm-9">
+                            @if (Model.IsActive == true)
+                            {
+                                <span class="badge bg-success">Hoạt động</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">Bị ban</span>
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">Lần đăng nhập cuối:</dt>
+                        <dd class="col-sm-9">@Html.DisplayFor(model => model.LastLogin)</dd>
+                    </dl>
+
+                    <div class="btn-group mt-4">
+                        <a asp-action="Edit" asp-route-id="@Model.AccountId" class="btn btn-success">Sửa</a>
+                        <a asp-action="Delete" asp-route-id="@Model.AccountId" class="btn btn-danger">Xóa</a>
+                        <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer clearfix mb-0 text-muted">
+            <div class="float-start">
+                <p>2021 &copy; Mazer</p>
+            </div>
+            <div class="float-end">
+                <p>
+                    Crafted with <span class="text-danger"><i class="bi bi-heart"></i></span> by <a href="http://ahmadsaugi.com">A. Saugi</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+</div>
+

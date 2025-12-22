@@ -39,7 +39,11 @@ public partial class Car
 
     public int? TypeId { get; set; }
 
+    public int? OwnerId { get; set; }
+
     public virtual ICollection<CarReview> CarReviews { get; set; } = new List<CarReview>();
 
     public virtual CarType? Type { get; set; }
+
+    public virtual Account? Owner { get; set; }
 }

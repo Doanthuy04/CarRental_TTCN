@@ -1,4 +1,4 @@
-﻿using CarRental.Models;
+using CarRental.Models;
 using CarRental.Utilities;
 using CarRental.ViewModels;
 using Microsoft.AspNetCore.Mvc;
@@ -125,8 +125,8 @@ namespace CarRental.Areas.Admin.Controllers
                         (od, c) => new OrderDetailVM
                         {
                             OrderDetailID = od.OrderId,
-                            CarName = c.CarName,
-                            Image = c.Image,
+                            CarName = c.CarName ?? string.Empty,
+                            Image = c.Image ?? string.Empty,
                             Quantity = (int)od.Quantity,
                             pickupDate = (DateTime)od.PickupDate,
                             returnDate = (DateTime)od.ReturnDate,

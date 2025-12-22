@@ -1,0 +1,345 @@
+@using CarRental.Utilities;
+@{
+    ViewData["Title"] = "Trang chủ";
+    Layout = "~/Areas/CarOwner/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .dashboard-welcome {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 2rem;
+        border-radius: 15px;
+        margin-bottom: 2rem;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+    }
+
+    .dashboard-welcome h2 {
+        margin: 0;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .dashboard-welcome p {
+        margin: 0.5rem 0 0 0;
+        opacity: 0.9;
+        font-size: 1rem;
+    }
+
+    .stats-card {
+        height: 100%;
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .stats-card.purple {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .stats-card.blue {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+
+    .stats-card.green {
+        background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+
+    .stats-card.red {
+        background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    }
+
+    .stats-card .card-body {
+        padding: 1.5rem;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 120px;
+    }
+
+    .stats-icon-modern {
+        width: 60px;
+        height: 60px;
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(10px);
+        font-size: 1.8rem;
+    }
+
+    .stats-content {
+        flex: 1;
+        margin-left: 1rem;
+    }
+
+    .stats-content h6 {
+        color: rgba(255, 255, 255, 0.9);
+        font-size: 0.875rem;
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+    }
+
+    .stats-content .stats-value {
+        color: white;
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin: 0;
+    }
+
+    .recent-cars-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+    }
+
+    .recent-cars-card .card-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 1.25rem 1.5rem;
+    }
+
+    .recent-cars-card .card-header h4 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.25rem;
+    }
+
+    .recent-cars-card .table {
+        margin: 0;
+    }
+
+    .recent-cars-card .table thead {
+        background-color: #f8f9fa;
+    }
+
+    .recent-cars-card .table thead th {
+        border: none;
+        padding: 1rem;
+        font-weight: 600;
+        color: #495057;
+        font-size: 0.875rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .recent-cars-card .table tbody tr {
+        transition: all 0.2s ease;
+    }
+
+    .recent-cars-card .table tbody tr:hover {
+        background-color: #f8f9fa;
+        transform: scale(1.01);
+    }
+
+    .recent-cars-card .table tbody td {
+        padding: 1rem;
+        vertical-align: middle;
+        border-top: 1px solid #e9ecef;
+    }
+
+    @@media (max-width: 768px) {
+        .dashboard-welcome {
+            padding: 1.5rem;
+        }
+
+        .dashboard-welcome h2 {
+            font-size: 1.5rem;
+        }
+
+        .stats-card .card-body {
+            flex-direction: column;
+            text-align: center;
+            min-height: 140px;
+        }
+
+        .stats-content {
+            margin-left: 0;
+            margin-top: 1rem;
+        }
+
+        .stats-icon-modern {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+        }
+
+        .stats-content .stats-value {
+            font-size: 1.5rem;
+        }
+    }
+
+    @@media (max-width: 576px) {
+        .stats-card .card-body {
+            padding: 1rem;
+        }
+    }
+</style>
+
+<div id="main">
+    <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+        </a>
+    </header>
+
+    <div class="page-heading">
+        <div class="dashboard-welcome">
+            <h2>Xin chào, @Function._UserName!</h2>
+            <p>Chào mừng bạn đến với trang quản lý của chủ xe</p>
+        </div>
+    </div>
+
+    <div class="page-content">
+        <section class="row">
+            <div class="col-12">
+                <!-- Stats Cards -->
+                <div class="row g-4 mb-4">
+                    <div class="col-12 col-sm-6 col-lg-3 col-md-6">
+                        <div class="stats-card purple">
+                            <div class="card-body">
+                                <div class="stats-icon-modern">
+                                    <i class="bi bi-car-front"></i>
+                                </div>
+                                <div class="stats-content">
+                                    <h6>Tổng số xe</h6>
+                                    <p class="stats-value">@ViewBag.TotalCars</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-3 col-md-6">
+                        <div class="stats-card blue">
+                            <div class="card-body">
+                                <div class="stats-icon-modern">
+                                    <i class="bi bi-check-circle"></i>
+                                </div>
+                                <div class="stats-content">
+                                    <h6>Xe đang hoạt động</h6>
+                                    <p class="stats-value">@ViewBag.ActiveCars</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-3 col-md-6">
+                        <div class="stats-card green">
+                            <div class="card-body">
+                                <div class="stats-icon-modern">
+                                    <i class="bi bi-receipt"></i>
+                                </div>
+                                <div class="stats-content">
+                                    <h6>Tổng đơn hàng</h6>
+                                    <p class="stats-value">@ViewBag.TotalOrders</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6 col-lg-3 col-md-6">
+                        <div class="stats-card red">
+                            <div class="card-body">
+                                <div class="stats-icon-modern">
+                                    <i class="bi bi-cash-stack"></i>
+                                </div>
+                                <div class="stats-content">
+                                    <h6>Doanh thu</h6>
+                                    <p class="stats-value">@string.Format("{0:N0}", ViewBag.TotalRevenue) đ</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Cars Table -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card recent-cars-card">
+                            <div class="card-header">
+                                <h4><i class="bi bi-clock-history me-2"></i>Xe gần đây</h4>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover mb-0">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>Tên xe</th>
+                                                <th>Hạng xe</th>
+                                                <th>Giá</th>
+                                                <th>Trạng thái</th>
+                                                <th>Thao tác</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (ViewBag.RecentCars != null && ((List<CarRental.Models.Car>)ViewBag.RecentCars).Any())
+                                            {
+                                                int i = 1;
+                                                @foreach (var car in ViewBag.RecentCars)
+                                                {
+                                                    <tr>
+                                                        <td class="fw-bold">@i</td>
+                                                        <td class="fw-semibold">@car.CarName</td>
+                                                        <td>@(car.Type?.CarTypeName ?? "N/A")</td>
+                                                        <td class="text-primary fw-bold">@string.Format("{0:N0}", car.Price) đ</td>
+                                                        <td>
+                                                            @if (car.IsActive)
+                                                            {
+                                                                <span class="badge bg-success rounded-pill">Hoạt động</span>
+                                                            }
+                                                            else
+                                                            {
+                                                                <span class="badge bg-danger rounded-pill">Tạm dừng</span>
+                                                            }
+                                                        </td>
+                                                        <td>
+                                                            <a asp-controller="Cars" asp-action="Details" asp-area="CarOwner" asp-route-id="@car.CarId" class="btn btn-sm btn-info rounded-pill">
+                                                                <i class="bi bi-eye me-1"></i>Chi tiết
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                    i++;
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <tr>
+                                                    <td colspan="6" class="text-center text-muted py-4">
+                                                        <i class="bi bi-inbox fs-1 d-block mb-2"></i>
+                                                        Chưa có xe nào
+                                                    </td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer clearfix mb-0 text-muted">
+            <div class="float-start">
+                <p>2024 &copy; CarRental - Chủ xe</p>
+            </div>
+        </div>
+    </footer>
+</div>
+

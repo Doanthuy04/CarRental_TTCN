@@ -22,6 +22,15 @@ namespace CarRental.Controllers
             {
                 return NotFound();
             }
+
+            // Kiểm tra rỗng để tránh lỗi và yêu cầu nhập đầy đủ thông tin
+            if (string.IsNullOrWhiteSpace(c.Name) ||
+                string.IsNullOrWhiteSpace(c.Email) ||
+                string.IsNullOrWhiteSpace(c.Password))
+            {
+                Function._MessageEmail = "Vui lòng nhập đầy đủ Họ tên, Email và Mật khẩu.";
+                return RedirectToAction("Index", "Register");
+            }
             //kiểm tra sự tồn tại trong DB
             var check = _context.Customers.Where(m=> m.Email == c.Email).FirstOrDefault();
             if (check != null)

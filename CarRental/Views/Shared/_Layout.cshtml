@@ -49,7 +49,7 @@
                 <div class="row align-items-center">
                     <div class="col-lg-2 col-xl-2 col-md-6 col-6 col-custom">
                         <div class="header-logo d-flex align-items-center">
-                            <a href="index.html">
+                            <a asp-controller="Home" asp-action="Index">
                                 <img class="img-full" src="~/assets/images/logo/logo.png" alt="Header Logo">
                             </a>
                         </div>
@@ -81,6 +81,13 @@
                                     <a asp-controller="Accounts" asp-action="Index"  class="off-canvas-menu-btn">
                                         <i class="bi bi-person-fill"></i>
                                     </a>
+                                    <ul class="dropdown-sidemenu dropdown-hover-2">
+                                        <li><a asp-controller="Accounts" asp-action="Index">Tài khoản</a></li>
+                                        @if (Function._CarOwnerAccountId > 0)
+                                        {
+                                            <li><a asp-controller="Accounts" asp-action="GoToCarOwner">Vào trang quản lý xe</a></li>
+                                        }
+                                    </ul>
                                 </li>
                                 <li class="mobile-menu-btn d-lg-none">
                                     <a class="off-canvas-btn" href="#">
@@ -150,8 +157,8 @@
                                             <ul class="dropdown">
                                                 <li><a href="error404.html">Error 404</a></li>
                                                 <li><a href="compare.html">Compare Page</a></li>
-                                                <li><a href="cart.html">Cart Page</a></li>
-                                                <li><a href="checkout.html">Checkout Page</a></li>
+                                                <li><a href="@Url.Action("Index", "Cart")">Cart Page</a></li>
+                                                <li><a href="@Url.Action("Checkout", "Cart")">Checkout Page</a></li>
                                                 <li><a href="wishlist.html">Wish List Page</a></li>
                                             </ul>
                                         </li>
@@ -318,7 +325,7 @@
                     <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-custom">
                         <div class="single-footer-widget m-0">
                             <div class="footer-logo">
-                                <a href="index.html">
+                                <a asp-controller="Home" asp-action="Index">
                                     <img src="~/assets/images/logo/logo-footer.png" alt="Logo Image">
                                 </a>
                             </div>
@@ -373,7 +380,7 @@
                                 <li><a href="about-us.html">About</a></li>
                                 <li><a href="blog.html">Blog</a></li>
                                 <li><a href="shop.html">Shop</a></li>
-                                <li><a href="cart.html">Cart</a></li>
+                                <li><a href="@Url.Action("Index", "Cart")">Cart</a></li>
                                 <li><a href="contact-us.html">Contact</a></li>
                             </ul>
                         </div>

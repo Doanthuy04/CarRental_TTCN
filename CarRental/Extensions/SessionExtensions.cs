@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 namespace CarRental.Extensions
 {
@@ -9,10 +9,10 @@ namespace CarRental.Extensions
             session.SetString(key, JsonConvert.SerializeObject(value));
         }
 
-        public static T Get<T>(this ISession session, string key)
+        public static T? Get<T>(this ISession session, string key)
         {
             var value = session.GetString(key);
-            return value == null ? default : JsonConvert.DeserializeObject<T>(value);
+            return value == null ? default(T) : JsonConvert.DeserializeObject<T>(value);
         }
     }
 }

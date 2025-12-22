@@ -1,5 +1,145 @@
-﻿@model CarRental.Models.Customer;
-@using CarRental.Utilities;
+﻿@model CarRental.Models.Customer
+@using CarRental.Utilities
+
+@section style {
+    <style>
+        .login-wrapper-modern {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-card-modern {
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+            padding: 40px 36px;
+            max-width: 460px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card-modern::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at top left, rgba(231, 36, 99, 0.16), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(79, 70, 229, 0.14), transparent 55%);
+            pointer-events: none;
+        }
+
+        .login-card-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .login-input-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .login-input-group input {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 12px 40px 12px 44px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .login-input-group input:focus {
+            outline: none;
+            border-color: #e72463;
+            box-shadow: 0 0 0 1px rgba(231, 36, 99, 0.35);
+        }
+
+        .login-input-icon {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 16px;
+        }
+
+        .login-message {
+            font-size: 13px;
+            color: #ef4444;
+            min-height: 18px;
+        }
+
+        .login-meta {
+            font-size: 13px;
+        }
+
+        .login-meta a {
+            color: #e72463;
+        }
+
+        .login-primary-btn {
+            width: 100%;
+            border-radius: 999px;
+            font-weight: 600;
+            padding: 11px 0;
+            background: linear-gradient(135deg, #e72463, #f97316);
+            border: none;
+            box-shadow: 0 12px 24px rgba(231, 36, 99, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Tắt hiệu ứng overlay/pseudo-element mặc định của theme cho nút này */
+        .login-primary-btn::before,
+        .login-primary-btn::after {
+            content: none !important;
+        }
+
+        /* Hiệu ứng nổi nhẹ khi hover, không đổi màu */
+        .login-primary-btn:hover {
+            /* Đổi màu nhẹ hơn khi hover + hiệu ứng nổi */
+            background: linear-gradient(135deg, #f78ca0, #fbd786);
+            transform: translateY(-1px);
+            box-shadow: 0 16px 32px rgba(231, 36, 99, 0.45);
+        }
+
+        .login-primary-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 8px 18px rgba(148, 27, 74, 0.4);
+        }
+
+        .login-footer-text {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        @@media (max-width: 576px) {
+            .login-card-modern {
+                padding: 28px 22px;
+                border-radius: 14px;
+            }
+
+            .login-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+}
 
 <!-- Breadcrumb Area Start Here -->
 <div class="breadcrumbs-area position-relative">
@@ -7,10 +147,10 @@
         <div class="row">
             <div class="col-12 text-center">
                 <div class="breadcrumb-content position-relative section-content">
-                    <h3 class="title-3">Login-Register</h3>
+                    <h3 class="title-3">Login</h3>
                     <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li>Login-Register</li>
+                        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li>Login</li>
                     </ul>
                 </div>
             </div>
@@ -18,46 +158,69 @@
     </div>
 </div>
 <!-- Breadcrumb Area End Here -->
+
 <!-- Login Area Start Here -->
 <div class="login-register-area mt-no-text">
     <div class="container custom-area">
-        <div class="row">
-            <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-custom">
-                <div class="login-register-wrapper">
-                    <div class="section-content text-center mb-5">
-                        <h2 class="title-4 mb-2">Login</h2>
-                        <p class="desc-content">Please login using account detail bellow.</p>
+        <div class="login-wrapper-modern">
+            <div class="login-card-modern">
+                <div class="login-card-inner">
+                    <div class="text-center mb-4">
+                        <h2 class="login-title">Welcome back</h2>
+                        <p class="login-subtitle">Please login using your account information below.</p>
                     </div>
+
                     <form asp-controller="Login" asp-action="Index" asp-route-returnurl="@ViewBag.ReturnUrl">
                         <input type="hidden" name="ReturnUrl" value="@ViewData["ReturnUrl"]" />
 
-                        <div class="single-input-item mb-3">
-                            <input type="email" asp-for="Email" placeholder="Email or Username">
+                        <div class="login-input-group">
+                            <span class="login-input-icon">
+                                <i class="lnr lnr-envelope"></i>
+                            </span>
+                            <input type="email" asp-for="Email" placeholder="Email">
                         </div>
-                        <div class="single-input-item mb-3">
-                            <input type="password" asp-for="Password" placeholder="Enter your Password">
+
+                        <div class="login-input-group">
+                            <span class="login-input-icon">
+                                <i class="lnr lnr-lock"></i>
+                            </span>
+                            <input type="password" asp-for="Password" placeholder="Password">
                         </div>
-                        <div class="single-input-item mb-3">
-                           <h6>
-                               @Function._Message
-                           </h6>
-                        </div>
-                        <div class="single-input-item mb-3">
-                            <div class="login-reg-form-meta d-flex align-items-center justify-content-between">
-                                <div class="remember-meta mb-3">
-                                    <div class="custom-control custom-checkbox">
-                                        <input type="checkbox" class="custom-control-input" id="rememberMe">
-                                        <label class="custom-control-label" for="rememberMe">Remember Me</label>
-                                    </div>
+
+                        <div class="mb-2 login-message">
+                            @{
+                                var message = Function.GetMessage(Context.Session);
+                            }
+                            @if (message == "LOCKED")
+                            {
+                                <div class="alert alert-danger" role="alert">
+                                    <strong>Tài khoản của bạn đã bị khóa!</strong><br>
+                                    Tài khoản bạn đã vi phạm chính sách nên đã bị khóa. Vui lòng liên hệ admin để được trợ giúp.
                                 </div>
-                                <a href="#" class="forget-pwd mb-3">Forget Password?</a>
+                            }
+                            else if (!string.IsNullOrEmpty(message))
+                            {
+                                <div class="alert alert-danger" role="alert">
+                                    @message
+                                </div>
+                            }
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mb-3 login-meta">
+                            <div class="remember-meta d-flex align-items-center">
+                                <input type="checkbox" id="rememberMe" class="mr-2" style="margin-right:6px;">
+                                <label for="rememberMe" class="mb-0">Remember me</label>
                             </div>
+                            <a href="#" class="forget-pwd">Forgot password?</a>
                         </div>
-                        <div class="single-input-item mb-3">
-                            <button class="btn flosun-button secondary-btn theme-color rounded-0">Login</button>
-                        </div>
-                        <div class="single-input-item">
-                            <a asp-controller="Register" asp-action="Index">Creat Account</a>
+
+                        <button type="submit" class="btn flosun-button secondary-btn theme-color login-primary-btn">
+                            Login
+                        </button>
+
+                        <div class="text-center mt-4 login-footer-text">
+                            Chưa có tài khoản?
+                            <a asp-controller="Register" asp-action="Index">Tạo tài khoản ngay</a>
                         </div>
                     </form>
                 </div>

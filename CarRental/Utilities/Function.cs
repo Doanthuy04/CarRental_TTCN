@@ -2,11 +2,26 @@
 using SlugGenerator;
 using System.Security.Cryptography;
 using System.Text;
+using Microsoft.AspNetCore.Http;
 namespace CarRental.Utilities
 {
     public class Function
     {
+        // Session keys
+        private const string SESSION_ACCOUNT_ID = "AccountId";
+        private const string SESSION_CAR_OWNER_ACCOUNT_ID = "CarOwnerAccountId";
+        private const string SESSION_USER_NAME = "UserName";
+        private const string SESSION_EMAIL = "Email";
+        private const string SESSION_ADDRESS = "Address";
+        private const string SESSION_PHONE = "Phone";
+        private const string SESSION_MESSAGE = "Message";
+        private const string SESSION_MESSAGE_EMAIL = "MessageEmail";
+        private const string SESSION_PICKUP_DATE = "PickupDate";
+        private const string SESSION_RETURN_DATE = "ReturnDate";
+
+        // Static variables for backward compatibility (deprecated - use Session instead)
         public static int _AccountId = 0;
+        public static int _CarOwnerAccountId = 0; // AccountId của chủ xe (nếu Customer có Account với RoleId=3)
         public static string _UserName = String.Empty;
         public static string _Email = String.Empty;
         public static string _Message = string.Empty;
@@ -15,6 +30,109 @@ namespace CarRental.Utilities
         public static string _Phone = String.Empty;
         public static string _pickupDate = String.Empty;
         public static string _returnDate = String.Empty;
+
+        // Session helper methods
+        public static void SetAccountId(ISession session, int accountId)
+        {
+            session.SetInt32(SESSION_ACCOUNT_ID, accountId);
+            _AccountId = accountId; // Keep for backward compatibility
+        }
+
+        public static int GetAccountId(ISession session)
+        {
+            return session.GetInt32(SESSION_ACCOUNT_ID) ?? 0;
+        }
+
+        public static void SetCarOwnerAccountId(ISession session, int accountId)
+        {
+            session.SetInt32(SESSION_CAR_OWNER_ACCOUNT_ID, accountId);
+            _CarOwnerAccountId = accountId; // Keep for backward compatibility
+        }
+
+        public static int GetCarOwnerAccountId(ISession session)
+        {
+            return session.GetInt32(SESSION_CAR_OWNER_ACCOUNT_ID) ?? 0;
+        }
+
+        public static void SetUserName(ISession session, string userName)
+        {
+            session.SetString(SESSION_USER_NAME, userName ?? string.Empty);
+            _UserName = userName ?? string.Empty; // Keep for backward compatibility
+        }
+
+        public static string GetUserName(ISession session)
+        {
+            return session.GetString(SESSION_USER_NAME) ?? string.Empty;
+        }
+
+        public static void SetEmail(ISession session, string email)
+        {
+            session.SetString(SESSION_EMAIL, email ?? string.Empty);
+            _Email = email ?? string.Empty; // Keep for backward compatibility
+        }
+
+        public static string GetEmail(ISession session)
+        {
+            return session.GetString(SESSION_EMAIL) ?? string.Empty;
+        }
+
+        public static void SetAddress(ISession session, string address)
+        {
+            session.SetString(SESSION_ADDRESS, address ?? string.Empty);
+            _address = address ?? string.Empty; // Keep for backward compatibility
+        }
+
+        public static string GetAddress(ISession session)
+        {
+            return session.GetString(SESSION_ADDRESS) ?? string.Empty;
+        }
+
+        public static void SetPhone(ISession session, string phone)
+        {
+            session.SetString(SESSION_PHONE, phone ?? string.Empty);
+            _Phone = phone ?? string.Empty; // Keep for backward compatibility
+        }
+
+        public static string GetPhone(ISession session)
+        {
+            return session.GetString(SESSION_PHONE) ?? string.Empty;
+        }
+
+        /// <summary>
+        /// Kiểm tra tài khoản hiện tại trong Session có phải là Admin hay không.
+        /// Dùng cho khu vực Admin để chặn truy cập trái phép.
+        /// </summary>
+        public static bool IsAdmin(ISession session)
+        {
+            var userName = GetUserName(session);
+            return !string.IsNullOrEmpty(userName) && userName.Equals("Admin", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static void SetMessage(ISession session, string message)
+        {
+            session.SetString(SESSION_MESSAGE, message ?? string.Empty);
+            _Message = message ?? string.Empty; // Keep for backward compatibility
+        }
+
+        public static string GetMessage(ISession session)
+        {
+            return session.GetString(SESSION_MESSAGE) ?? string.Empty;
+        }
+
+        public static void ClearSession(ISession session)
+        {
+            session.Clear();
+            _AccountId = 0;
+            _CarOwnerAccountId = 0;
+            _UserName = string.Empty;
+            _Email = string.Empty;
+            _Message = string.Empty;
+            _MessageEmail = string.Empty;
+            _address = string.Empty;
+            _Phone = string.Empty;
+            _pickupDate = string.Empty;
+            _returnDate = string.Empty;
+        }
 
         //public static string CART_KEY = "MYCART";
         public static string TitleSlugGenerationAlias(string title)
@@ -44,8 +162,17 @@ namespace CarRental.Utilities
             }
             return str;
         }
-        public static bool IsLogin()
+        public static bool IsLogin(ISession session = null)
         {
+            // If session is provided, use Session; otherwise use static variables for backward compatibility
+            if (session != null)
+            {
+                var accountId = GetAccountId(session);
+                var userName = GetUserName(session);
+                var email = GetEmail(session);
+                return accountId > 0 && !string.IsNullOrEmpty(userName) && !string.IsNullOrEmpty(email);
+            }
+            // Backward compatibility: use static variables
             if (string.IsNullOrEmpty(Function._UserName) || string.IsNullOrEmpty(Function._Email) || (Function._AccountId <= 0))
             {
                 return false;

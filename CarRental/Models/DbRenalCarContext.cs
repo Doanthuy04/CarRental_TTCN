@@ -129,10 +129,15 @@ public partial class DbRenalCarContext : DbContext
             entity.Property(e => e.Price).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.SalePrice).HasColumnType("decimal(18, 2)");
             entity.Property(e => e.TypeId).HasColumnName("TypeID");
+            entity.Property(e => e.OwnerId).HasColumnName("OwnerID");
 
             entity.HasOne(d => d.Type).WithMany(p => p.Cars)
                 .HasForeignKey(d => d.TypeId)
                 .HasConstraintName("FK_Cars_CarTypes");
+
+            entity.HasOne(d => d.Owner).WithMany()
+                .HasForeignKey(d => d.OwnerId)
+                .HasConstraintName("FK_Cars_Account");
         });
 
         modelBuilder.Entity<CarImage>(entity =>
@@ -367,6 +372,10 @@ public partial class DbRenalCarContext : DbContext
                 .HasForeignKey(d => d.OrderId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK__OrderDeta__Order__33D4B598");
+
+            entity.HasOne(d => d.Car).WithMany()
+                .HasForeignKey(d => d.CarId)
+                .HasConstraintName("FK_OrderDetails_Cars");
         });
 
         modelBuilder.Entity<OrderStatus>(entity =>

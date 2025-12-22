@@ -1,6 +1,7 @@
 ﻿using CarRental.Models;
 using CarRental.Utilities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace CarRental.Controllers
 {
@@ -14,18 +15,35 @@ namespace CarRental.Controllers
         [HttpGet]
         public IActionResult Index(string? ReturnUrl = null)
         {
+            // Nếu đã đăng nhập thì không cho vào lại trang Login, chuyển thẳng về Trang chủ
+            if (Function.IsLogin(HttpContext.Session))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Không cho trình duyệt cache trang Login để tránh quay lại bằng nút Back
+            Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+            Response.Headers["Pragma"] = "no-cache";
+            Response.Headers["Expires"] = "0";
+
             ViewData["ReturnUrl"] = ReturnUrl;
             return View();
         }
         [HttpPost]
-        public IActionResult Index(Customer c, string? ReturnUrl)
+        public async Task<IActionResult> Index(Customer c, string? ReturnUrl = null)
         {
-           
             if (c == null)
             {
-
                 return NotFound();
             }
+            
+            // Kiểm tra rỗng để tránh lỗi khi chưa nhập gì đã bấm Login
+            if (string.IsNullOrWhiteSpace(c.Email) || string.IsNullOrWhiteSpace(c.Password))
+            {
+                Function.SetMessage(HttpContext.Session, "Vui lòng nhập đầy đủ tài khoản và mật khẩu.");
+                return RedirectToAction("Index", "Login");
+            }
+
             if (ModelState.IsValid)
             {
                 //mã hoá mật khẩu trc khi kiểm tra
@@ -35,31 +53,48 @@ namespace CarRental.Controllers
                 if (check == null)
                 {
                     //hiên thị thông báo
-                    Function._Message = "Sai thông tin đăng nhập";
+                    Function.SetMessage(HttpContext.Session, "Sai thông tin đăng nhập");
                     return RedirectToAction("Index", "Login");
                 }
 
-                //đăng nhập thành công
-                Function._Message = string.Empty;
-                Function._AccountId = check.CustomerId;
-                Function._UserName = string.IsNullOrEmpty(check.Name) ? string.Empty : check.Name;
-                Function._Email = string.IsNullOrEmpty(check.Email) ? string.Empty : check.Email;
-                Function._address = string.IsNullOrEmpty(check.Address) ? string.Empty : check.Address;
-                Function._Phone = string.IsNullOrEmpty(check.PhoneNumber) ? string.Empty : check.PhoneNumber;
-
-                // Check if the ReturnUrl is not null and is a local URL
-                if (!string.IsNullOrEmpty(ReturnUrl) && Url.IsLocalUrl(ReturnUrl))
+                // Kiểm tra xem Customer có Account tương ứng không và kiểm tra trạng thái khóa
+                var account = await _context.Accounts
+                    .FirstOrDefaultAsync(a => a.Email == check.Email);
+                
+                if (account != null && account.IsActive == false)
                 {
-                    return Redirect(ReturnUrl);
+                    // Tài khoản bị khóa
+                    Function.SetMessage(HttpContext.Session, "LOCKED");
+                    return RedirectToAction("Index", "Login");
+                }
+
+                //đăng nhập thành công - lưu vào Session
+                Function.SetMessage(HttpContext.Session, string.Empty);
+                Function.SetAccountId(HttpContext.Session, check.CustomerId);
+                Function.SetUserName(HttpContext.Session, string.IsNullOrEmpty(check.Name) ? string.Empty : check.Name);
+                Function.SetEmail(HttpContext.Session, string.IsNullOrEmpty(check.Email) ? string.Empty : check.Email);
+                Function.SetAddress(HttpContext.Session, string.IsNullOrEmpty(check.Address) ? string.Empty : check.Address);
+                Function.SetPhone(HttpContext.Session, string.IsNullOrEmpty(check.PhoneNumber) ? string.Empty : check.PhoneNumber);
+
+                // Kiểm tra xem Customer có Account với RoleId=3 (Chủ xe) không
+                var carOwnerAccount = await _context.Accounts
+                    .FirstOrDefaultAsync(a => a.Email == check.Email && a.RoleId == 3);
+                
+                if (carOwnerAccount != null)
+                {
+                    Function.SetCarOwnerAccountId(HttpContext.Session, carOwnerAccount.AccountId);
                 }
                 else
-                {
-                    // Redirect to default page
-                    return RedirectToAction("Index", "Home");
+                {       
+                    Function.SetCarOwnerAccountId(HttpContext.Session, 0);
                 }
+
+                // Luôn chuyển về Trang chủ sau khi đăng nhập, bỏ qua ReturnUrl
+                return RedirectToAction("Index", "Home");
             }
 
             return View();
         }
     }
 }
+

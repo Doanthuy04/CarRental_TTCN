@@ -34,7 +34,7 @@ namespace CarRental.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 b.Alias = CarRental.Utilities.Function.TitleSlugGenerationAlias(b.Title);
-                b.CreatedBy = CarRental.Utilities.Function._UserName;
+                b.CreatedBy = Function.GetUserName(HttpContext.Session);
                 b.CreatedDate = DateTime.Now;
                 _context.Blogs.Add(b);
                 _context.SaveChanges();
@@ -61,7 +61,7 @@ namespace CarRental.Areas.Admin.Controllers
         {
             if (ModelState.IsValid) {
                 b.Alias = CarRental.Utilities.Function.TitleSlugGenerationAlias(b.Title);
-                b.ModifiedBy = CarRental.Utilities.Function._UserName;
+                b.ModifiedBy = Function.GetUserName(HttpContext.Session);
                 b.ModifiedDate = DateTime.Now;
                 _context.Blogs.Update(b);
                 _context.SaveChanges();

@@ -1,0 +1,232 @@
+@model IList<CarRental.Models.Account>
+@{
+    ViewData["Title"] = "Quản lý người dùng";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div id="main">
+    <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+        </a>
+    </header>
+
+    <div class="page-heading">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-12 col-md-6 order-md-1 order-last">
+                    <h3>Quản lý người dùng</h3>
+                    <p class="text-subtitle text-muted">Danh sách tài khoản người dùng</p>
+                </div>
+                <div class="col-12 col-md-6 order-md-2 order-first">
+                    <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/Admin/Home">Dashboard</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Quản lý người dùng</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <section class="section">
+            <div class="row" id="table-hover-row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h4 class="card-title">Danh sách tài khoản</h4>
+                        </div>
+                        <div class="card-content">
+                            <!-- Thông báo -->
+                            @if (TempData["ErrorMessage"] != null)
+                            {
+                                <div class="alert alert-danger alert-dismissible fade show m-3" role="alert">
+                                    @TempData["ErrorMessage"]
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            }
+                            @if (TempData["SuccessMessage"] != null)
+                            {
+                                <div class="alert alert-success alert-dismissible fade show m-3" role="alert">
+                                    @TempData["SuccessMessage"]
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            }
+                            <!-- Form tìm kiếm và lọc -->
+                            <div class="card-body">
+                                <form asp-action="Index" method="get" class="row g-3 mb-4">
+                                    <div class="col-md-4">
+                                        <label class="form-label">Tìm kiếm</label>
+                                        <input type="text" name="searchString" value="@ViewBag.SearchString" class="form-control" placeholder="Tên, email, username, số điện thoại...">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="form-label">Lọc theo loại</label>
+                                        @{
+                                            var filterType = ViewBag.FilterType as string ?? "";
+                                        }
+                                        <select name="filterType" class="form-select">
+                                            <option value="">-- Tất cả --</option>
+                                            @if (filterType == "customer")
+                                            {
+                                                <option value="customer" selected>Khách hàng</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="customer">Khách hàng</option>
+                                            }
+                                            @if (filterType == "carowner")
+                                            {
+                                                <option value="carowner" selected>Chủ xe</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="carowner">Chủ xe</option>
+                                            }
+                                            @if (filterType == "banned")
+                                            {
+                                                <option value="banned" selected>Account bị ban</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="banned">Account bị ban</option>
+                                            }
+                                        </select>
+                                    </div>
+                                    <div class="col-md-4 d-flex align-items-end">
+                                        <button type="submit" class="btn btn-primary me-2">Tìm kiếm</button>
+                                        <a asp-action="Index" class="btn btn-secondary">Làm mới</a>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Bảng danh sách -->
+                            <div class="table-responsive">
+                                <table class="table table-hover mb-0">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>ID</th>
+                                            <th>Username</th>
+                                            <th>Họ tên</th>
+                                            <th>Email</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Role</th>
+                                            <th>Trạng thái</th>
+                                            <th>Chức năng</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @if (Model != null && Model.Any())
+                                        {
+                                            int i = 1;
+                                            foreach (var item in Model)
+                                            {
+                                                <tr>
+                                                    <td class="text-bold-500">@(i++)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.AccountId)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.Username)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.FullName)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                                                    <td>@Html.DisplayFor(modelItem => item.Phone)</td>
+                                                    <td>
+                                                        @if (item.Role != null)
+                                                        {
+                                                            <span class="badge bg-info">@item.Role.RoleName</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-secondary">Chưa có</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (item.IsActive == true)
+                                                        {
+                                                            <span class="badge bg-success">Hoạt động</span>
+                                                        }
+                                                        else
+                                                        {
+                                                            <span class="badge bg-danger">Bị ban</span>
+                                                        }
+                                                    </td>
+                                                    <td>
+                                                        @if (item.RoleId == 1)
+                                                        {
+                                                            <a asp-action="Details" asp-route-id="@item.AccountId" class="btn btn-info btn-sm disabled" style="pointer-events: none; opacity: 0.5;">Chi tiết</a>
+                                                            <a asp-action="Edit" asp-route-id="@item.AccountId" class="btn btn-success btn-sm disabled" style="pointer-events: none; opacity: 0.5;">Sửa</a>
+                                                            <a asp-action="Delete" asp-route-id="@item.AccountId" class="btn btn-danger btn-sm disabled" style="pointer-events: none; opacity: 0.5;">Xóa</a>
+                                                            <button type="button" class="btn btn-warning btn-sm disabled" style="pointer-events: none; opacity: 0.5;" disabled>Khóa/Mở khóa</button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a asp-action="Details" asp-route-id="@item.AccountId" class="btn btn-info btn-sm">Chi tiết</a>
+                                                            <a asp-action="Edit" asp-route-id="@item.AccountId" class="btn btn-success btn-sm">Sửa</a>
+                                                            <a asp-action="Delete" asp-route-id="@item.AccountId" class="btn btn-danger btn-sm">Xóa</a>
+                                                            @if (item.IsActive == true)
+                                                            {
+                                                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#lockModal@(item.AccountId)">Khóa</button>
+                                                            }
+                                                            else
+                                                            {
+                                                                <form asp-area="Admin" asp-controller="UserManagement" asp-action="ToggleLock" asp-route-id="@item.AccountId" method="post" style="display: inline;" onsubmit="return confirm('Bạn có chắc chắn muốn mở khóa tài khoản này?');">
+                                                                    @Html.AntiForgeryToken()
+                                                                    <button type="submit" class="btn btn-success btn-sm">Mở khóa</button>
+                                                                </form>
+                                                            }
+                                                            
+                                                            <!-- Modal xác nhận khóa -->
+                                                            <div class="modal fade" id="lockModal@(item.AccountId)" tabindex="-1" aria-labelledby="lockModalLabel@(item.AccountId)" aria-hidden="true">
+                                                                <div class="modal-dialog">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title" id="lockModalLabel@(item.AccountId)">Xác nhận khóa tài khoản</h5>
+                                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                                        </div>
+                                                                        <div class="modal-body">
+                                                                            <p>Bạn có muốn khóa tài khoản này không?</p>
+                                                                            <p class="text-muted"><strong>@item.FullName</strong> (@item.Email)</p>
+                                                                        </div>
+                                                                        <div class="modal-footer">
+                                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                                                                            <form asp-area="Admin" asp-controller="UserManagement" asp-action="ToggleLock" asp-route-id="@item.AccountId" method="post" style="display: inline;">
+                                                                                @Html.AntiForgeryToken()
+                                                                                <button type="submit" class="btn btn-warning">Xác nhận khóa</button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        }
+                                                    </td>
+                                                </tr>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <tr>
+                                                <td colspan="9" class="text-center text-muted">Không có tài khoản nào được tìm thấy.</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer clearfix mb-0 text-muted">
+            <div class="float-start">
+                <p>2021 &copy; Mazer</p>
+            </div>
+            <div class="float-end">
+                <p>
+                    Crafted with <span class="text-danger"><i class="bi bi-heart"></i></span> by <a href="http://ahmadsaugi.com">A. Saugi</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+</div>
+

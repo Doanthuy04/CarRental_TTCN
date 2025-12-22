@@ -1,0 +1,102 @@
+@using CarRental.Utilities
+@model CarRental.Models.Account
+@{
+    ViewData["Title"] = "Đăng ký - Chủ xe";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Breadcrumb Area Start Here -->
+<div class="breadcrumbs-area position-relative">
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <div class="breadcrumb-content position-relative section-content">
+                    <h3 class="title-3">Đăng ký Chủ xe</h3>
+                    <ul>
+                        <li><a asp-controller="Home" asp-action="Index" asp-area="">Trang chủ</a></li>
+                        <li>Đăng ký Chủ xe</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Breadcrumb Area End Here -->
+
+<!-- Register Area Start Here -->
+<div class="login-register-area mt-no-text" style="margin-bottom:200px">
+    <div class="container container-default-2 custom-area">
+        <div class="row">
+            <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-custom">
+                <div class="login-register-wrapper">
+                    <div class="section-content text-center mb-5">
+                        <h2 class="title-4 mb-2">Đăng ký tài khoản Chủ xe</h2>
+                        <p class="desc-content">Đăng ký để trở thành chủ xe và cho thuê xe của bạn trên hệ thống.</p>
+                    </div>
+
+                    @if (!string.IsNullOrEmpty(Function._Message))
+                    {
+                        <div class="alert alert-danger">@Function._Message</div>
+                    }
+
+                    <form asp-controller="Register" asp-action="Index" asp-area="CarOwner" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <div class="single-input-item mb-3">
+                            <label asp-for="Username">Tên đăng nhập *</label>
+                            <input type="text" asp-for="Username" class="form-control" placeholder="Nhập tên đăng nhập" required />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+
+                        <div class="single-input-item mb-3">
+                            <label asp-for="Email">Email *</label>
+                            <input type="email" asp-for="Email" class="form-control" placeholder="Nhập email" required />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="single-input-item mb-3">
+                            <label asp-for="Password">Mật khẩu *</label>
+                            <input type="password" asp-for="Password" class="form-control" placeholder="Nhập mật khẩu" required />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                        </div>
+
+                        <div class="single-input-item mb-3">
+                            <label asp-for="FullName">Họ và tên</label>
+                            <input type="text" asp-for="FullName" class="form-control" placeholder="Nhập họ và tên" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="single-input-item mb-3">
+                            <label asp-for="Phone">Số điện thoại</label>
+                            <input type="text" asp-for="Phone" class="form-control" placeholder="Nhập số điện thoại" />
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+
+                        <div class="single-input-item mb-3">
+                            <div class="login-reg-form-meta d-flex align-items-center justify-content-between">
+                                <div class="remember-meta mb-3">
+                                    <div class="custom-control custom-checkbox">
+                                        <label class="custom-control-label">
+                                            Bạn đã có tài khoản? 
+                                            <a asp-controller="Accounts" asp-action="Index" style="color:#E72463">Vào trang tài khoản</a>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="single-input-item mb-3">
+                            <button type="submit" class="btn flosun-button secondary-btn theme-color rounded-0 w-100">Đăng ký</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Register Area End Here -->
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

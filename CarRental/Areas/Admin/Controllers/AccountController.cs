@@ -17,12 +17,12 @@ namespace CarRental.Areas.Admin.Controllers
         public async Task<IActionResult> Edit()
         {
             // Kiểm tra trạng thái đăng nhập
-            if (!Function.IsLogin())
+            if (!Function.IsLogin(HttpContext.Session))
             {
                 return RedirectToAction("Index", "Login");
             }
 
-            var ID = Function._AccountId;
+            var ID = Function.GetAccountId(HttpContext.Session);
             var accID = await _context.Accounts.FirstOrDefaultAsync(a => a.AccountId == ID);
 
             if (accID == null)
@@ -45,7 +45,7 @@ namespace CarRental.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 
-                var id = Function._AccountId;
+                var id = Function.GetAccountId(HttpContext.Session);
                 var user = _context.Accounts.FirstOrDefault(u => u.AccountId == id);
                 if (user == null)
                 {
@@ -59,6 +59,7 @@ namespace CarRental.Areas.Admin.Controllers
                     var emailExists = _context.Accounts.Any(p => p.Email == userModel.Email);
                     if(emailExists)
                     {
+                        // Note: _MessageEmail is not stored in session, keeping for backward compatibility
                         Function._MessageEmail = "Email đã tồn tại";
                         return View(user);
                     } else

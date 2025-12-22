@@ -189,10 +189,8 @@
 </div>
 <!-- Checkout Area End Here -->
 @section scripts {
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script>
-        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         $(document).ready(function () {
             $("#checkoutForm").submit(function (e) {
@@ -213,14 +211,84 @@
                     data: JSON.stringify(formData),
                     success: function (response) {
                         if (response.success) {
-                            // Chuyển hướng đến URL được trả về
-                            window.location.href = response.redirectUrl;
+                            // Nếu là thanh toán VNPay thì chuyển thẳng sang trang thanh toán của VNPay
+                            if (response.isVnpay) {
+                                window.location.href = response.redirectUrl;
+                            } else {
+                                // Hiển thị dialog đặt xe thành công, sau đó chuyển đến trang đơn hàng
+                                Swal.fire({
+                                    icon: 'success',
+                                    title: 'Đặt xe thành công!',
+                                    text: 'Bạn có thể xem chi tiết trong mục Đơn hàng của bạn.',
+                                    confirmButtonText: 'Xem đơn hàng',
+                                    confirmButtonColor: '#667eea',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then(() => {
+                                    window.location.href = response.redirectUrl;
+                                });
+                            }
                         } else {
-                            alert(response.message); // Hiển thị lỗi nếu có
+                            // Kiểm tra nếu cần cập nhật địa chỉ
+                            if (response.needAddress) {
+                                // Hiển thị dialog với SweetAlert2 - chỉ có 1 nút OK
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Chưa cập nhật địa chỉ',
+                                    text: response.message,
+                                    confirmButtonText: 'Cập nhật địa chỉ ngay',
+                                    confirmButtonColor: '#667eea',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then((result) => {
+                                    // Khi bấm OK thì chuyển đến trang cập nhật địa chỉ
+                                    if (result.isConfirmed) {
+                                        window.location.href = response.redirectUrl;
+                                    } else {
+                                        // Nếu đóng bằng cách khác thì cũng chuyển
+                                        window.location.href = response.redirectUrl;
+                                    }
+                                });
+                            } 
+                            // Kiểm tra nếu cần cập nhật GPLX
+                            else if (response.needLicense) {
+                                // Hiển thị dialog với SweetAlert2 - chỉ có 1 nút OK
+                                Swal.fire({
+                                    icon: 'warning',
+                                    title: 'Chưa cập nhật GPLX',
+                                    text: response.message,
+                                    confirmButtonText: 'Cập nhật GPLX ngay',
+                                    confirmButtonColor: '#667eea',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then((result) => {
+                                    // Khi bấm OK thì chuyển đến trang My Account với tab GPLX
+                                    if (result.isConfirmed) {
+                                        window.location.href = response.redirectUrl;
+                                    } else {
+                                        // Nếu đóng bằng cách khác thì cũng chuyển
+                                        window.location.href = response.redirectUrl;
+                                    }
+                                });
+                            } 
+                            else {
+                                // Hiển thị thông báo lỗi thông thường
+                                Swal.fire({
+                                    icon: 'error',
+                                    title: 'Lỗi',
+                                    text: response.message,
+                                    confirmButtonColor: '#667eea'
+                                });
+                            }
                         }
                     },
                     error: function () {
-                        alert("Có lỗi xảy ra. Vui lòng thử lại.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Lỗi',
+                            text: 'Có lỗi xảy ra. Vui lòng thử lại.',
+                            confirmButtonColor: '#667eea'
+                        });
                     }
                 });
             });

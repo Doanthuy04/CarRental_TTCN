@@ -1,4 +1,4 @@
-﻿using CarRental.Extensions;
+using CarRental.Extensions;
 using CarRental.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +13,7 @@ namespace CarRental.ViewComponents
             _context = context;
         }
 
-        public async Task<IViewComponentResult> InvokeAsync()
+        public IViewComponentResult Invoke()
         {
             // Lấy danh sách ID sản phẩm gần đây từ session
             var recentProductIds = HttpContext.Session.Get<List<int>>("RecentProducts") ?? new List<int>();

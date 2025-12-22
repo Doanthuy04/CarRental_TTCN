@@ -1,15 +1,136 @@
 ﻿@using CarRental.Utilities
-@model CarRental.Models.Customer;
+@model CarRental.Models.Customer
+
+@section style {
+    <style>
+        .auth-wrapper-modern {
+            min-height: 70vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-card-modern {
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+            padding: 40px 36px;
+            max-width: 480px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-card-modern::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at top left, rgba(231, 36, 99, 0.16), transparent 55%),
+                radial-gradient(circle at bottom right, rgba(79, 70, 229, 0.14), transparent 55%);
+            pointer-events: none;
+        }
+
+        .auth-card-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .auth-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .auth-subtitle {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .auth-input-group {
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .auth-input-group input {
+            width: 100%;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+            padding: 12px 16px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .auth-input-group input:focus {
+            outline: none;
+            border-color: #e72463;
+            box-shadow: 0 0 0 1px rgba(231, 36, 99, 0.35);
+        }
+
+        .auth-message {
+            font-size: 13px;
+            color: #ef4444;
+            min-height: 18px;
+        }
+
+        .auth-footer-text {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .auth-primary-btn {
+            width: 100%;
+            border-radius: 999px;
+            font-weight: 600;
+            padding: 11px 0;
+            background: linear-gradient(135deg, #e72463, #f97316);
+            border: none;
+            box-shadow: 0 12px 24px rgba(231, 36, 99, 0.35);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-primary-btn::before,
+        .auth-primary-btn::after {
+            content: none !important;
+        }
+
+        .auth-primary-btn:hover {
+            background: linear-gradient(135deg, #f78ca0, #fbd786);
+            transform: translateY(-1px);
+            box-shadow: 0 16px 32px rgba(231, 36, 99, 0.45);
+        }
+
+        .auth-primary-btn:active {
+            transform: translateY(0);
+            box-shadow: 0 8px 18px rgba(148, 27, 74, 0.4);
+        }
+
+        @@media (max-width: 576px) {
+            .auth-card-modern {
+                padding: 28px 22px;
+                border-radius: 14px;
+            }
+
+            .auth-title {
+                font-size: 24px;
+            }
+        }
+    </style>
+}
+
 <!-- Breadcrumb Area Start Here -->
 <div class="breadcrumbs-area position-relative">
     <div class="container">
         <div class="row">
             <div class="col-12 text-center">
                 <div class="breadcrumb-content position-relative section-content">
-                    <h3 class="title-3">Login-Register</h3>
+                    <h3 class="title-3">Register</h3>
                     <ul>
-                        <li><a href="index.html">Home</a></li>
-                        <li>Login-Register</li>
+                        <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li>Register</li>
                     </ul>
                 </div>
             </div>
@@ -17,47 +138,42 @@
     </div>
 </div>
 <!-- Breadcrumb Area End Here -->
+
 <!-- Register Area Start Here -->
 <div class="login-register-area mt-no-text" style="margin-bottom:200px">
-    <div class="container container-default-2 custom-area">
-        <div class="row">
-            <div class="col-lg-6 offset-lg-3 col-md-8 offset-md-2 col-custom">
-                <div class="login-register-wrapper">
-                    <div class="section-content text-center mb-5">
-                        <h2 class="title-4 mb-2">Create Account</h2>
-                        <p class="desc-content">Please Register using account detail bellow.</p>
+    <div class="container custom-area">
+        <div class="auth-wrapper-modern">
+            <div class="auth-card-modern">
+                <div class="auth-card-inner">
+                    <div class="text-center mb-4">
+                        <h2 class="auth-title">Create account</h2>
+                        <p class="auth-subtitle">Please register using your information below.</p>
                     </div>
+
                     <form asp-controller="Register" asp-action="Index">
-                        <div class="single-input-item mb-3">
-                            <input type="text" asp-for="Name" placeholder="Your Name">
+                        <div class="auth-input-group">
+                            <input type="text" asp-for="Name" placeholder="Your name">
                         </div>
-                        @* <div class="single-input-item mb-3">
-                            <input type="text" placeholder="Last Name">
-                        </div> *@
-                        <div class="single-input-item mb-3">
-                            <input type="email" asp-for="Email" placeholder="Email ">
+
+                        <div class="auth-input-group">
+                            <input type="email" asp-for="Email" placeholder="Email">
                         </div>
-                        <div class="single-input-item mb-3">
-                            <input type="password" asp-for="Password" placeholder="Enter your Password">
+
+                        <div class="auth-input-group">
+                            <input type="password" asp-for="Password" placeholder="Password">
                         </div>
-                        <div class="single-input-item mb-3">
-                            <div class="login-reg-form-meta d-flex align-items-center justify-content-between">
-                                <div class="remember-meta mb-3">
-                                    <div class="custom-control custom-checkbox">
-                                        @* <input type="checkbox" class="custom-control-input" id="rememberMe"> *@
-                                        <label class="custom-control-label" for="rememberMe">Bạn đã có tài khoản? <a asp-controller="Login" asp-action="Index" style="color:#E72463">Đăng nhập</a></label>
-                                    </div>
-                                </div>
-                            </div>
+
+                        <div class="mb-2 auth-message">
+                            @Function._MessageEmail
                         </div>
-                        <div class="single-input-item mb-3">
-                            <h6>
-                                
-                                @Function._MessageEmail
-                            </h6>
-                        </div>
-                        <div class="single-input-item mb-3">
-                            <button class="btn flosun-button secondary-btn theme-color rounded-0">Đăng kí</button>
+
+                        <button type="submit" class="btn flosun-button secondary-btn theme-color auth-primary-btn">
+                            Đăng ký
+                        </button>
+
+                        <div class="text-center mt-4 auth-footer-text">
+                            Đã có tài khoản?
+                            <a asp-controller="Login" asp-action="Index" style="color:#E72463">Đăng nhập</a>
                         </div>
                     </form>
                 </div>

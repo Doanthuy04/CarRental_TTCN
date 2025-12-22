@@ -5,6 +5,114 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    .order-detail-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        margin-bottom: 30px;
+    }
+    
+    .car-item-card {
+        background: #f7fafc;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
+    }
+    
+    .car-item-card:hover {
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        border-color: #667eea;
+    }
+    
+    .car-image {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    .car-image img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+    
+    .info-card {
+        background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+        border-radius: 12px;
+        padding: 25px;
+        border-left: 4px solid #667eea;
+    }
+    
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #e2e8f0;
+    }
+    
+    .info-row:last-child {
+        border-bottom: none;
+    }
+    
+    .info-label {
+        font-weight: 600;
+        color: #4a5568;
+    }
+    
+    .info-value {
+        color: #2d3748;
+        font-weight: 500;
+    }
+    
+    .status-badge {
+        display: inline-block;
+        padding: 8px 16px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+    
+    .status-cancelled {
+        background: #fed7d7;
+        color: #c53030;
+    }
+    
+    .status-cancelled-large {
+        background: linear-gradient(135deg, #fed7d7 0%, #fc8181 100%);
+        color: #c53030;
+        padding: 15px 30px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        text-align: center;
+        display: block;
+        width: 100%;
+        border: 2px solid #fc8181;
+        cursor: not-allowed;
+    }
+    
+    .btn-cancel {
+        background: linear-gradient(135deg, #fc8181 0%, #f56565 100%);
+        border: none;
+        border-radius: 8px;
+        padding: 12px 30px;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        width: 100%;
+    }
+    
+    .btn-cancel:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(252, 129, 129, 0.4);
+        color: white;
+    }
+</style>
 
 <!-- Breadcrumb Area Start Here -->
 <div class="breadcrumbs-area position-relative">
@@ -26,74 +134,109 @@
 <!-- cart main wrapper start -->
 <div class="cart-main-wrapper mt-no-text" style="margin-bottom:100px">
     <div class="container custom-area">
-        <div class="row">
-            <div class="col-lg-12 col-custom">
-                <!-- Cart Table Area -->
-                <div class="cart-table table-responsive">
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th class="pro-thumbnail">Hình ảnh</th>
-                                <th class="pro-title">Tên xe</th>
-                                <th class="pro-price">Ngày nhận xe</th>
-                                <th class="pro-price">Ngày trả xe</th>
-                                <th class="pro-quantity">Số lượng</th>
-                                
-                                @* <th class="pro-remove">Huỷ</th *@>  
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach(var item in Model) {
-                                <tr>
-                                    <td class="pro-thumbnail"><a href="#"><img class="img-fluid" src="@item.Image" alt="Product" /></a></td>
-                                    <td class="pro-title"><a href="#"> @item.CarName</a></td>
-                                    <td class="pro-price"><span>@item.pickupDate.ToString("dd-MM-yyyy")</span></td>
-                                    <td class="pro-price"><span>@item.returnDate.ToString("dd-MM-yyyy")</span></td>
-                                    <td class="pro-quantity">
-                                        <div class="quantity">
-                                            <p>@item.Quantity</p>
+        <div class="order-detail-card">
+            <h2 style="color: #2d3748; margin-bottom: 30px; font-weight: 600;">
+                <i class="bi bi-receipt"></i> Chi tiết đơn hàng #@ViewBag.OrderId
+            </h2>
+            
+            <div class="row">
+                <div class="col-lg-8">
+                    <h4 style="color: #4a5568; margin-bottom: 20px; font-weight: 600;">
+                        <i class="bi bi-car-front"></i> Danh sách xe
+                    </h4>
+                    @foreach(var item in Model) {
+                        <div class="car-item-card">
+                            <div class="row align-items-center">
+                                <div class="col-md-3">
+                                    <div class="car-image">
+                                        <img src="@item.Image" alt="@item.CarName" />
+                                    </div>
+                                </div>
+                                <div class="col-md-9">
+                                    <h5 style="color: #2d3748; font-weight: 600; margin-bottom: 15px;">
+                                        @item.CarName
+                                    </h5>
+                                    <div class="row">
+                                        <div class="col-md-4 mb-2">
+                                            <div style="color: #718096; font-size: 13px; margin-bottom: 5px;">
+                                                <i class="bi bi-calendar-check"></i> Ngày nhận
+                                            </div>
+                                            <div style="font-weight: 600; color: #2d3748;">
+                                                @item.pickupDate.ToString("dd/MM/yyyy")
+                                            </div>
                                         </div>
-                                    </td>
-                                    @* <td class="pro-subtotal"><span>$@item.Total</span></td> *@
-                                    @* <td class="pro-remove"><a href="#"><i class="lnr lnr-trash"></i></a></td> *@
-                                </tr>
-                            }
-                            
-                           
-                        </tbody>
-                    </table>
+                                        <div class="col-md-4 mb-2">
+                                            <div style="color: #718096; font-size: 13px; margin-bottom: 5px;">
+                                                <i class="bi bi-calendar-x"></i> Ngày trả
+                                            </div>
+                                            <div style="font-weight: 600; color: #2d3748;">
+                                                @item.returnDate.ToString("dd/MM/yyyy")
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4 mb-2">
+                                            <div style="color: #718096; font-size: 13px; margin-bottom: 5px;">
+                                                <i class="bi bi-123"></i> Số lượng
+                                            </div>
+                                            <div style="font-weight: 600; color: #2d3748; font-size: 18px;">
+                                                @item.Quantity
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </div>
-               
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-5 ml-auto col-custom">
-                <!-- Cart Calculation Area -->
-                <div class="cart-calculator-wrapper">
-                    <div class="cart-calculate-items">
-                        <h3>Địa chỉ nhận hàng</h3>
-                        <div class="table-responsive">
-                            <table class="table">
-                                <tr>
-                                    <td>Tên người nhận</td>
-                                    <td>@Function._UserName</td>
-                                </tr>
-                                <tr>
-                                    <td>Số điện thoại</td>
-                                    <td>@Function._Phone</td>
-                                </tr>
-                                <tr class="total">
-                                    <td>Địa chỉ</td>
-                                    <td class="total-amount">@Function._address</td>
-                                </tr>
-                            </table>
+                
+                <div class="col-lg-4">
+                    <div class="info-card">
+                        <h4 style="color: #2d3748; margin-bottom: 20px; font-weight: 600;">
+                            <i class="bi bi-geo-alt-fill"></i> Địa chỉ nhận hàng
+                        </h4>
+                        <div class="info-row">
+                            <span class="info-label"><i class="bi bi-person"></i> Tên người nhận</span>
+                            <span class="info-value">@Function.GetUserName(Context.Session)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label"><i class="bi bi-telephone"></i> Số điện thoại</span>
+                            <span class="info-value">@Function.GetPhone(Context.Session)</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label"><i class="bi bi-geo-alt"></i> Địa chỉ</span>
+                            <span class="info-value" style="text-align: right;">@Function.GetAddress(Context.Session)</span>
                         </div>
                     </div>
-                    <form id="cancelOrderForm" >
-                        <input type="hidden" id="orderId" value="@ViewBag.OrderId" />
-                        <button type="submit" class="btn flosun-button primary-btn rounded-0 black-btn w-100">Trả lại đơn hàng</button>
-
-                    </form>
+                    
+                    @{
+                        int statusId = ViewBag.StatusId != null ? (int)ViewBag.StatusId : 0;
+                        string statusDescription = ViewBag.StatusDescription != null ? ViewBag.StatusDescription.ToString() : "";
+                        // Kiểm tra cả StatusId = 2 hoặc StatusDescription chứa "hủy", "Huỷ", "huy" (không dấu)
+                        string statusLower = !string.IsNullOrEmpty(statusDescription) ? statusDescription.ToLower() : "";
+                        bool isCancelled = statusId == 2 || 
+                                         (!string.IsNullOrEmpty(statusDescription) && 
+                                          (statusLower.Contains("hủy") || 
+                                           statusLower.Contains("huy") ||
+                                           statusDescription.Contains("Huỷ")));
+                    }
+                    @if (isCancelled)
+                    {
+                        <!-- Đơn hàng đã hủy - chỉ hiển thị badge, không có nút hủy -->
+                        <div style="margin-top: 20px;">
+                            <div class="status-cancelled-large">
+                                <i class="bi bi-x-circle-fill"></i> Đã hủy
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <!-- Đơn hàng chưa hủy - hiển thị nút hủy đơn hàng -->
+                        <form id="cancelOrderForm" style="margin-top: 20px;">
+                            <input type="hidden" id="orderId" value="@ViewBag.OrderId" />
+                            <button type="submit" class="btn-cancel">
+                                <i class="bi bi-x-circle"></i> Hủy đơn hàng
+                            </button>
+                        </form>
+                    }
                 </div>
             </div>
         </div>

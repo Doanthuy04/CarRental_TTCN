@@ -1,0 +1,130 @@
+@model CarRental.Models.Account
+@{
+    ViewData["Title"] = "Sửa tài khoản";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+<div id="main">
+    <header class="mb-3">
+        <a href="#" class="burger-btn d-block d-xl-none">
+            <i class="bi bi-justify fs-3"></i>
+        </a>
+    </header>
+
+    <div class="page-heading">
+        <div class="page-title">
+            <div class="row">
+                <div class="col-12 col-md-6 order-md-1 order-last">
+                    <h3>Sửa tài khoản</h3>
+                    <p class="text-subtitle text-muted">Chỉnh sửa thông tin tài khoản người dùng</p>
+                </div>
+                <div class="col-12 col-md-6 order-md-2 order-first">
+                    <nav aria-label="breadcrumb" class="breadcrumb-header float-start float-lg-end">
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="/Admin/Home">Dashboard</a></li>
+                            <li class="breadcrumb-item"><a asp-action="Index">Quản lý người dùng</a></li>
+                            <li class="breadcrumb-item active" aria-current="page">Sửa</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <section class="section">
+            <div class="card">
+                <div class="card-header">
+                    <h4 class="card-title">Thông tin tài khoản</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        
+                        <input type="hidden" asp-for="AccountId" />
+                        
+                        <div class="form-group mb-3">
+                            <label asp-for="Username" class="form-label">Username</label>
+                            <input asp-for="Username" class="form-control" />
+                            <span asp-validation-for="Username" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Password" class="form-label">Mật khẩu mới (để trống nếu không đổi)</label>
+                            <input asp-for="Password" type="password" class="form-control" placeholder="Nhập mật khẩu mới hoặc để trống" />
+                            <span asp-validation-for="Password" class="text-danger"></span>
+                            <small class="form-text text-muted">Nếu không muốn đổi mật khẩu, hãy để trống trường này.</small>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="FullName" class="form-label">Họ tên</label>
+                            <input asp-for="FullName" class="form-control" />
+                            <span asp-validation-for="FullName" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Email" class="form-label">Email</label>
+                            <input asp-for="Email" type="email" class="form-control" />
+                            <span asp-validation-for="Email" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="Phone" class="form-label">Số điện thoại</label>
+                            <input asp-for="Phone" class="form-control" />
+                            <span asp-validation-for="Phone" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="RoleId" class="form-label">Role</label>
+                            <select asp-for="RoleId" asp-items="ViewBag.Roles" class="form-select">
+                                <option value="">-- Chọn role --</option>
+                            </select>
+                            <span asp-validation-for="RoleId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label asp-for="LastLogin" class="form-label">Lần đăng nhập cuối</label>
+                            <input asp-for="LastLogin" class="form-control" readonly />
+                            <span asp-validation-for="LastLogin" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <div class="form-check">
+                                @{
+                                    bool isActiveValue = Model.IsActive ?? false;
+                                }
+                                <input name="IsActive" type="checkbox" class="form-check-input" value="true" checked="@isActiveValue" />
+                                <input type="hidden" name="IsActive" value="false" />
+                                <label class="form-check-label">
+                                    Tài khoản hoạt động
+                                </label>
+                            </div>
+                            <span asp-validation-for="IsActive" class="text-danger"></span>
+                        </div>
+
+                        <div class="btn-group">
+                            <button type="submit" class="btn btn-primary">Lưu</button>
+                            <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="footer clearfix mb-0 text-muted">
+            <div class="float-start">
+                <p>2021 &copy; Mazer</p>
+            </div>
+            <div class="float-end">
+                <p>
+                    Crafted with <span class="text-danger"><i class="bi bi-heart"></i></span> by <a href="http://ahmadsaugi.com">A. Saugi</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
